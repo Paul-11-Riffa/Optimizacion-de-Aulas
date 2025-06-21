@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Optimizador de Asignación de Aulas</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Optimizador de Asignación de Aulas (MILP)</h1>
+      <p>
+        Define los datos de tu problema y haz clic en "Resolver" para encontrar
+        la asignación óptima.
+      </p>
+
+      <div class="main-content">
+        <div class="input-section">
+          <h2>1. Datos del Problema</h2>
+
+          <div class="form-group">
+            <h3>Aulas Disponibles</h3>
+            <table id="aulas-table">
+              <thead>
+                <tr>
+                  <th>Nombre del Aula</th>
+                  <th>Capacidad</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <button type="button" onclick="agregarFila('aulas-table')">
+              Añadir Aula
+            </button>
+          </div>
+
+          <div class="form-group">
+            <h3>Grupos de Estudiantes</h3>
+            <table id="grupos-table">
+              <thead>
+                <tr>
+                  <th>Nombre del Grupo/Materia</th>
+                  <th>Nº de Estudiantes</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <button type="button" onclick="agregarFila('grupos-table')">
+              Añadir Grupo
+            </button>
+          </div>
+
+          <div class="form-group">
+            <h3>Parámetros de Penalización</h3>
+            <div class="param-group">
+              <label for="delta">Umbral de Tolerancia (δ) en %:</label>
+              <input type="number" id="delta" value="20" min="0" max="100" />
+            </div>
+            <div class="param-group">
+              <label for="lambda">Factor de Penalización (λ):</label>
+              <input type="number" id="lambda" value="1.0" step="0.1" min="0" />
+            </div>
+          </div>
+        </div>
+
+        <div class="action-section">
+          <button id="solveBtn">Resolver con Python</button>
+        </div>
+
+        <div class="results-section">
+          <h2>Resultados de la Optimización</h2>
+          <pre id="results">Esperando la ejecución...</pre>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Función para agregar una fila a una tabla
+      function agregarFila(tableId) {
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        const newRow = tableBody.insertRow();
+
+        if (tableId === "aulas-table") {
+          newRow.innerHTML = `
+                    <td><input type="text" placeholder="Ej: Aula 101" /></td>
+                    <td><input type="number" placeholder="Ej: 45" min="1" /></td>
+                    <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+                `;
+        } else if (tableId === "grupos-table") {
+          newRow.innerHTML = `
+                    <td><input type="text" placeholder="Ej: Cálculo I" /></td>
+                    <td><input type="number" placeholder="Ej: 35" min="1" /></td>
+                    <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+                `;
+        }
+      }
+
+      // Función para eliminar una fila
+      function eliminarFila(button) {
+        button.closest("tr").remove();
+      }
+
+      // Cargar datos de ejemplo al iniciar
+      window.onload = () => {
+        const aulasEjemplo = [
+          { nombre: "P1_Aula_1", capacidad: 45 },
+          { nombre: "P1_Aula_2", capacidad: 60 },
+        ];
+        const gruposEjemplo = [
+          { nombre: "Grupo_Calculo", tamano: 35 },
+          { nombre: "Grupo_Fisica", tamano: 50 },
+        ];
+
+        aulasEjemplo.forEach((aula) =>
+          agregarFilaConDatos("aulas-table", aula.nombre, aula.capacidad)
+        );
+        gruposEjemplo.forEach((grupo) =>
+          agregarFilaConDatos("grupos-table", grupo.nombre, grupo.tamano)
+        );
+      };
+
+      function agregarFilaConDatos(tableId, nombre, valor) {
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+                <td><input type="text" value="${nombre}" /></td>
+                <td><input type="number" value="${valor}" min="1" /></td>
+                <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+            `;
+      }
+
+      // Lógica para resolver
+      document.getElementById("solveBtn").addEventListener("click", () => {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.textContent = "Recolectando datos y enviando a Python...";
+
+        // Recolectar datos de las tablas
+        function recolectarDatosDeTabla(tableId, key1, key2) {
+          const data = [];
+          const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+          rows.forEach((row) => {
+            const inputs = row.querySelectorAll("input");
+            const nombre = inputs[0].value;
+            const valor = parseInt(inputs[1].value, 10);
+            if (nombre && valor) {
+              // Solo añadir si ambos campos están completos
+              let obj = {};
+              obj[key1] = nombre;
+              obj[key2] = valor;
+              data.push(obj);
+            }
+          });
+          return data;
+        }
+
+        const aulas = recolectarDatosDeTabla(
+          "aulas-table",
+          "nombre",
+          "capacidad"
+        );
+        const grupos = recolectarDatosDeTabla(
+          "grupos-table",
+          "nombre",
+          "tamano"
+        );
+        const parametros = {
+          delta: parseFloat(document.getElementById("delta").value) / 100, // Convertir a decimal
+          lambda: parseFloat(document.getElementById("lambda").value),
+        };
+
+        // Validar que haya datos
+        if (aulas.length === 0 || grupos.length === 0) {
+          resultsDiv.textContent =
+            "Error: Debes definir al menos un aula y un grupo.";
+          return;
+        }
+
+        const payload = { aulas, grupos, parametros };
+        resultsDiv.textContent =
+          "Procesando... El servidor de Python está calculando la solución. Esto puede tardar unos segundos...";
+
+        // Enviar datos al servidor de Python
+        fetch("http://127.0.0.1:5000/solve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload), // Enviamos los datos recolectados
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Error de red al contactar el servidor.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.error) {
+              throw new Error(data.error);
+            }
+            let output = `Estado de la Solución: ${data.estado}\n`;
+            if (data.valor_objetivo !== null) {
+              output += `Valor de la Función Objetivo (Z): ${data.valor_objetivo.toFixed(
+                2
+              )}\n\n`;
+            }
+            output += "--- Asignaciones Óptimas ---\n";
+            if (data.resultados && data.resultados.length > 0) {
+              output += data.resultados.join("\n");
+            } else {
+              output += "No se encontraron asignaciones.";
+            }
+            resultsDiv.textContent = output;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            resultsDiv.textContent = `Error al procesar la solicitud. Asegúrate de que el script 'optimizacion.py' se está ejecutando.\n\nDetalles: ${error.message}`;
+          });
+      });
+    </script>
+  </body>
+</html>
