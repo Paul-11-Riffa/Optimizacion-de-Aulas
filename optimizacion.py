@@ -5,7 +5,7 @@ from flask import Flask, jsonify, render_template, request # Importamos 'request
 from flask_cors import CORS
 import webbrowser
 from threading import Timer
-
+import pyscipopt as scip
 # --- Creamos la aplicación Flask ---
 app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
@@ -63,9 +63,12 @@ def resolver_asignacion(datos_aulas, datos_grupos, datos_parametros):
         modelo += (U[i, j, t] >= x[i, j, t] * espacio_excedente,
                    f"Penalizacion_Subutilizacion_{i}_{j}_{t.replace(':', '').replace('-', '_')}")
 
-    # 6. RESOLVER EL MODELO
-    modelo.solve()
+        # optimizacion.py -> dentro de la función resolver_asignacion
 
+        # 6. RESOLVER EL MODELO
+        # Usamos el solver SCIP, que es excelente y más fácil de instalar en Windows.
+        # Es necesario tener 'pyscipopt' instalado (pip install pyscipopt)
+        modelo.solve()
     # 7. PREPARAR LOS RESULTADOS
     resultados = []
     valor_objetivo = None
@@ -81,26 +84,26 @@ def resolver_asignacion(datos_aulas, datos_grupos, datos_parametros):
     return {"estado": pulp.LpStatus[modelo.status], "valor_objetivo": valor_objetivo, "resultados": resultados}
 
 # --- Punto de entrada de la API ---
+# --- Punto de entrada de la API ---
 @app.route('/solve', methods=['POST'])
 def solve_endpoint():
-    try:
-        # Obtenemos los datos JSON enviados desde el navegador
-        datos_entrada = request.get_json()
-        
-        # Validamos que los datos necesarios estén presentes
-        if not datos_entrada or 'aulas' not in datos_entrada or 'grupos' not in datos_entrada:
-            raise ValueError("Los datos de entrada (aulas, grupos) son inválidos.")
+    # try:                                     <-- LÍNEA COMENTADA O ELIMINADA
+    # Obtenemos los datos JSON enviados desde el navegador
+    datos_entrada = request.get_json()
 
-        # Llamamos a la función de resolución con los datos recibidos
-        solucion = resolver_asignacion(
-            datos_entrada['aulas'], 
-            datos_entrada['grupos'], 
-            datos_entrada.get('parametros', {})
-        )
-        return jsonify(solucion)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Validamos que los datos necesarios estén presentes
+    if not datos_entrada or 'aulas' not in datos_entrada or 'grupos' not in datos_entrada:
+        raise ValueError("Los datos de entrada (aulas, grupos) son inválidos.")
 
+    # Llamamos a la función de resolución con los datos recibidos
+    solucion = resolver_asignacion(
+        datos_entrada['aulas'],
+        datos_entrada['grupos'],
+        datos_entrada.get('parametros', {})
+    )
+    return jsonify(solucion)
+    # except Exception as e:                   <-- LÍNEA COMENTADA O ELIMINADA
+    #     return jsonify({"error": str(e)}), 500 <-- LÍNEA COMENTADA O ELIMINADA
 # --- Lógica para iniciar el servidor y abrir el navegador ---
 def abrir_navegador():
       webbrowser.open_new('http://127.0.0.1:5000/')

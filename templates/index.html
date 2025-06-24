@@ -1,224 +1,280 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Optimizador de Asignación de Aulas</title>
     <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
     />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Optimizador de Asignación de Aulas (MILP)</h1>
-      <p>
+</head>
+<body>
+<div class="container">
+    <h1>Optimizador de Asignación de Aulas (MILP)</h1>
+    <p>
         Define los datos de tu problema y haz clic en "Resolver" para encontrar
         la asignación óptima.
-      </p>
+    </p>
 
-      <div class="main-content">
+    <div class="main-content">
         <div class="input-section">
-          <h2>1. Datos del Problema</h2>
+            <h2>1. Datos del Problema</h2>
 
-          <div class="form-group">
-            <h3>Aulas Disponibles</h3>
-            <table id="aulas-table">
-              <thead>
-                <tr>
-                  <th>Nombre del Aula</th>
-                  <th>Capacidad</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-            <button type="button" onclick="agregarFila('aulas-table')">
-              Añadir Aula
-            </button>
-          </div>
-
-          <div class="form-group">
-            <h3>Grupos de Estudiantes</h3>
-            <table id="grupos-table">
-              <thead>
-                <tr>
-                  <th>Nombre del Grupo/Materia</th>
-                  <th>Nº de Estudiantes</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-            <button type="button" onclick="agregarFila('grupos-table')">
-              Añadir Grupo
-            </button>
-          </div>
-
-          <div class="form-group">
-            <h3>Parámetros de Penalización</h3>
-            <div class="param-group">
-              <label for="delta">Umbral de Tolerancia (δ) en %:</label>
-              <input type="number" id="delta" value="20" min="0" max="100" />
+            <div class="form-group">
+                <h3>Aulas Disponibles</h3>
+                <div class="param-group">
+                    <label for="numPisos">Número de Pisos:</label>
+                    <input type="number" id="numPisos" value="1" min="1" style="width: 80px;"/>
+                    <button type="button" onclick="generarSeccionesPisos()">Generar Pisos</button>
+                </div>
+                <div id="aulas-por-piso-container">
+                </div>
             </div>
-            <div class="param-group">
-              <label for="lambda">Factor de Penalización (λ):</label>
-              <input type="number" id="lambda" value="1.0" step="0.1" min="0" />
+
+            <div class="form-group">
+                <h3>Grupos de Estudiantes</h3>
+                <table id="grupos-table">
+                    <thead>
+                    <tr>
+                        <th>Nombre del Grupo/Materia</th>
+                        <th>Nº de Estudiantes</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button type="button" onclick="agregarFilaGrupo()">
+                    Añadir Grupo
+                </button>
             </div>
-          </div>
+
+            <div class="form-group">
+                <h3>Parámetros de Penalización</h3>
+                <div class="param-group">
+                    <label for="delta">Umbral de Tolerancia (δ) en %:</label>
+                    <input type="number" id="delta" value="20" min="0" max="100"/>
+                </div>
+                <div class="param-group">
+                    <label for="lambda">Factor de Penalización (λ):</label>
+                    <input type="number" id="lambda" value="1.0" step="0.1" min="0"/>
+                </div>
+            </div>
         </div>
 
         <div class="action-section">
-          <button id="solveBtn">Resolver con Python</button>
+            <button id="solveBtn">Resolver con Python</button>
         </div>
 
         <div class="results-section">
-          <h2>Resultados de la Optimización</h2>
-          <pre id="results">Esperando la ejecución...</pre>
+            <h2>Resultados de la Optimización</h2>
+            <pre id="results">Esperando la ejecución...</pre>
         </div>
-      </div>
     </div>
+</div>
 
-    <script>
-      // Función para agregar una fila a una tabla
-      function agregarFila(tableId) {
+<script>
+    // --- NUEVA LÓGICA PARA PISOS Y AULAS ---
+
+    /**
+     * Genera las secciones de entrada para cada piso basado en el valor del input 'numPisos'.
+     */
+    function generarSeccionesPisos() {
+        const container = document.getElementById('aulas-por-piso-container');
+        const numPisos = parseInt(document.getElementById('numPisos').value, 10);
+        container.innerHTML = ''; // Limpia el contenedor antes de generar
+
+        if (numPisos > 0) {
+            for (let i = 1; i <= numPisos; i++) {
+                const pisoSection = document.createElement('div');
+                pisoSection.className = 'piso-section'; // Clase para estilizar
+                pisoSection.innerHTML = `
+              <h4>Piso ${i}</h4>
+              <table id="aulas-piso-${i}-table">
+                <thead>
+                  <tr>
+                    <th>Nombre del Aula</th>
+                    <th>Capacidad</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+              <button type="button" onclick="agregarFilaAula('aulas-piso-${i}-table', ${i})">
+                Añadir Aula al Piso ${i}
+              </button>
+            `;
+                container.appendChild(pisoSection);
+            }
+        }
+    }
+
+    /**
+     * Agrega una fila de aula a la tabla de un piso específico.
+     * @param {string} tableId - El ID de la tabla del piso.
+     * @param {number} pisoNum - El número del piso para generar el nombre del aula.
+     */
+    function agregarFilaAula(tableId, pisoNum) {
         const tableBody = document.querySelector(`#${tableId} tbody`);
+        const numAulasActual = tableBody.rows.length;
         const newRow = tableBody.insertRow();
 
-        if (tableId === "aulas-table") {
-          newRow.innerHTML = `
-                    <td><input type="text" placeholder="Ej: Aula 101" /></td>
-                    <td><input type="number" placeholder="Ej: 45" min="1" /></td>
-                    <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                `;
-        } else if (tableId === "grupos-table") {
-          newRow.innerHTML = `
-                    <td><input type="text" placeholder="Ej: Cálculo I" /></td>
-                    <td><input type="number" placeholder="Ej: 35" min="1" /></td>
-                    <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                `;
-        }
-      }
+        // Genera un nombre de aula único y predeterminado
+        const nombreAulaPredeterminado = `P${pisoNum}_Aula_${numAulasActual + 1}`;
 
-      // Función para eliminar una fila
-      function eliminarFila(button) {
+        newRow.innerHTML = `
+          <td><input type="text" value="${nombreAulaPredeterminado}" /></td>
+          <td><input type="number" placeholder="Ej: 45" min="1" /></td>
+          <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+        `;
+    }
+
+    // --- LÓGICA EXISTENTE (MODIFICADA Y CONSERVADA) ---
+
+    /**
+     * Agrega una fila a la tabla de grupos.
+     */
+    function agregarFilaGrupo() {
+        const tableBody = document.querySelector(`#grupos-table tbody`);
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+          <td><input type="text" placeholder="Ej: Cálculo I" /></td>
+          <td><input type="number" placeholder="Ej: 35" min="1" /></td>
+          <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+        `;
+    }
+
+    /**
+     * Elimina la fila más cercana al botón presionado.
+     */
+    function eliminarFila(button) {
         button.closest("tr").remove();
-      }
+    }
 
-      // Cargar datos de ejemplo al iniciar
-      window.onload = () => {
-        const aulasEjemplo = [
-          { nombre: "P1_Aula_1", capacidad: 45 },
-          { nombre: "P1_Aula_2", capacidad: 60 },
-        ];
+    /**
+     * Carga datos de ejemplo al iniciar la página.
+     */
+    window.onload = () => {
+        // Carga 2 pisos por defecto y añade aulas de ejemplo
+        document.getElementById('numPisos').value = 2;
+        generarSeccionesPisos();
+        agregarFilaAulaConDatos('aulas-piso-1-table', 'P1_Aula_1', 45);
+        agregarFilaAulaConDatos('aulas-piso-2-table', 'P2_Aula_1', 60);
+
+        // Carga grupos de ejemplo
         const gruposEjemplo = [
-          { nombre: "Grupo_Calculo", tamano: 35 },
-          { nombre: "Grupo_Fisica", tamano: 50 },
+            {nombre: "Grupo_Calculo", tamano: 35},
+            {nombre: "Grupo_Fisica", tamano: 50},
         ];
-
-        aulasEjemplo.forEach((aula) =>
-          agregarFilaConDatos("aulas-table", aula.nombre, aula.capacidad)
-        );
         gruposEjemplo.forEach((grupo) =>
-          agregarFilaConDatos("grupos-table", grupo.nombre, grupo.tamano)
+                agregarFilaGrupoConDatos(grupo.nombre, grupo.tamano)
         );
-      };
 
-      function agregarFilaConDatos(tableId, nombre, valor) {
+        // Genera las secciones de piso iniciales
+        generarSeccionesPisos();
+    };
+
+    // Funciones para cargar datos de ejemplo
+    function agregarFilaAulaConDatos(tableId, nombre, capacidad) {
         const tableBody = document.querySelector(`#${tableId} tbody`);
         const newRow = tableBody.insertRow();
         newRow.innerHTML = `
-                <td><input type="text" value="${nombre}" /></td>
-                <td><input type="number" value="${valor}" min="1" /></td>
-                <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-            `;
-      }
+          <td><input type="text" value="${nombre}" /></td>
+          <td><input type="number" value="${capacidad}" min="1" /></td>
+          <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+        `;
+    }
 
-      // Lógica para resolver
-      document.getElementById("solveBtn").addEventListener("click", () => {
+    function agregarFilaGrupoConDatos(nombre, tamano) {
+        const tableBody = document.querySelector(`#grupos-table tbody`);
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+              <td><input type="text" value="${nombre}" /></td>
+              <td><input type="number" value="${tamano}" min="1" /></td>
+              <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+          `;
+    }
+
+
+    // --- LÓGICA PARA RESOLVER (MODIFICADA) ---
+    document.getElementById("solveBtn").addEventListener("click", () => {
         const resultsDiv = document.getElementById("results");
         resultsDiv.textContent = "Recolectando datos y enviando a Python...";
 
-        // Recolectar datos de las tablas
-        function recolectarDatosDeTabla(tableId, key1, key2) {
-          const data = [];
-          const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-          rows.forEach((row) => {
-            const inputs = row.querySelectorAll("input");
-            const nombre = inputs[0].value;
-            const valor = parseInt(inputs[1].value, 10);
-            if (nombre && valor) {
-              // Solo añadir si ambos campos están completos
-              let obj = {};
-              obj[key1] = nombre;
-              obj[key2] = valor;
-              data.push(obj);
-            }
-          });
-          return data;
+        // NUEVA función para recolectar datos de todas las aulas en todos los pisos
+        function recolectarAulas() {
+            const aulas = [];
+            const sections = document.querySelectorAll('.piso-section');
+            sections.forEach(section => {
+                const rows = section.querySelectorAll("tbody tr");
+                rows.forEach(row => {
+                    const inputs = row.querySelectorAll("input");
+                    const nombre = inputs[0].value;
+                    const capacidad = parseInt(inputs[1].value, 10);
+                    if (nombre && capacidad > 0) {
+                        aulas.push({nombre, capacidad});
+                    }
+                });
+            });
+            return aulas;
         }
 
-        const aulas = recolectarDatosDeTabla(
-          "aulas-table",
-          "nombre",
-          "capacidad"
-        );
-        const grupos = recolectarDatosDeTabla(
-          "grupos-table",
-          "nombre",
-          "tamano"
-        );
+        // Función para recolectar datos de la tabla de grupos
+        function recolectarGrupos() {
+            const data = [];
+            const rows = document.querySelectorAll(`#grupos-table tbody tr`);
+            rows.forEach((row) => {
+                const inputs = row.querySelectorAll("input");
+                const nombre = inputs[0].value;
+                const tamano = parseInt(inputs[1].value, 10);
+                if (nombre && tamano > 0) {
+                    data.push({nombre, tamano});
+                }
+            });
+            return data;
+        }
+
+        const aulas = recolectarAulas();
+        const grupos = recolectarGrupos();
         const parametros = {
-          delta: parseFloat(document.getElementById("delta").value) / 100, // Convertir a decimal
-          lambda: parseFloat(document.getElementById("lambda").value),
+            delta: parseFloat(document.getElementById("delta").value) / 100,
+            lambda: parseFloat(document.getElementById("lambda").value),
         };
 
-        // Validar que haya datos
         if (aulas.length === 0 || grupos.length === 0) {
-          resultsDiv.textContent =
-            "Error: Debes definir al menos un aula y un grupo.";
-          return;
+            resultsDiv.textContent = "Error: Debes definir al menos un aula y un grupo.";
+            return;
         }
 
-        const payload = { aulas, grupos, parametros };
-        resultsDiv.textContent =
-          "Procesando... El servidor de Python está calculando la solución. Esto puede tardar unos segundos...";
+        const payload = {aulas, grupos, parametros};
+        resultsDiv.textContent = "Procesando... El servidor de Python está calculando la solución.";
 
-        // Enviar datos al servidor de Python
         fetch("http://127.0.0.1:5000/solve", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload), // Enviamos los datos recolectados
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload),
         })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Error de red al contactar el servidor.");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            if (data.error) {
-              throw new Error(data.error);
-            }
-            let output = `Estado de la Solución: ${data.estado}\n`;
-            if (data.valor_objetivo !== null) {
-              output += `Valor de la Función Objetivo (Z): ${data.valor_objetivo.toFixed(
-                2
-              )}\n\n`;
-            }
-            output += "--- Asignaciones Óptimas ---\n";
-            if (data.resultados && data.resultados.length > 0) {
-              output += data.resultados.join("\n");
-            } else {
-              output += "No se encontraron asignaciones.";
-            }
-            resultsDiv.textContent = output;
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            resultsDiv.textContent = `Error al procesar la solicitud. Asegúrate de que el script 'optimizacion.py' se está ejecutando.\n\nDetalles: ${error.message}`;
-          });
-      });
-    </script>
-  </body>
+                .then((response) => response.ok ? response.json() : Promise.reject(response))
+                .then((data) => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    let output = `Estado de la Solución: ${data.estado}\n`;
+                    if (data.valor_objetivo !== null) {
+                        output += `Valor de la Función Objetivo (Z): ${data.valor_objetivo.toFixed(2)}\n\n`;
+                    }
+                    output += "--- Asignaciones Óptimas ---\n";
+                    output += data.resultados.length > 0 ? data.resultados.join("\n") : "No se encontraron asignaciones.";
+                    resultsDiv.textContent = output;
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    resultsDiv.textContent = `Error al procesar la solicitud. Asegúrate de que el script 'optimizacion.py' se está ejecutando.\n\nDetalles: ${error.message || 'Error de red.'}`;
+                });
+    });
+
+    // Llama a generarSeccionesPisos al cargar para que la interfaz no esté vacía
+    document.addEventListener('DOMContentLoaded', generarSeccionesPisos);
+</script>
+</body>
 </html>
