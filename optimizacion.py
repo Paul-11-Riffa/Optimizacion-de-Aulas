@@ -98,9 +98,3 @@ def solve_endpoint():
     except Exception as e:
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
-# --- ELIMINAMOS ESTA SECCIÓN ---
-# Vercel se encarga de iniciar el servidor, por lo que este bloque ya no es necesario.
-# if __name__ == '__main__':
-#     Timer(1, abrir_navegador).start()
-#     app.run(port=5000, debug=False)
-# --- FIN DE LA ELIMINACIÓN ---
