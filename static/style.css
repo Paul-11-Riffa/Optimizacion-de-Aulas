@@ -1,7 +1,7 @@
 /* style.css */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 
-/* Reset básico y box-sizing global */
+/* Reset básico y configuración global */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,11 +10,12 @@
 
 body {
   font-family: "Montserrat", sans-serif;
-  background-color: #f0f4f8;
+  background-color: #f0f4f8; /* Un fondo gris azulado suave */
   color: #333;
   display: flex;
   justify-content: center;
   padding: 40px;
+  line-height: 1.6;
 }
 
 .container {
@@ -26,42 +27,35 @@ body {
   padding: 30px 40px;
 }
 
-h1,
-h2 {
-  color: #012a4a;
+/* --- TÍTULOS Y TEXTOS --- */
+h1, h2, h3, h4 {
+  color: #012a4a; /* Azul oscuro para los títulos */
+}
+
+h1 {
   text-align: center;
   margin-bottom: 10px;
 }
 
-p {
+h2 {
   text-align: center;
-  color: #4a6fa5;
   margin-bottom: 25px;
 }
 
+p {
+  text-align: center;
+  color: #4a6fa5; /* Un azul más suave para los párrafos */
+  margin-bottom: 30px;
+}
+
+/* --- SECCIONES PRINCIPALES --- */
 .action-section {
   text-align: center;
   margin: 30px 0;
 }
 
-#solveBtn {
-  background-color: #4caf50;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#solveBtn:hover {
-  background-color: #45a049;
-}
-
 .results-section pre {
-  background: #eef6fb;
+  background: #eef6fb; /* Fondo azul muy claro para los resultados */
   padding: 20px;
   border-radius: 8px;
   min-height: 150px;
@@ -69,10 +63,11 @@ p {
   white-space: pre-wrap;
   font-family: "Courier New", monospace;
   text-align: left;
+  line-height: 1.5;
+  color: #012a4a;
 }
 
-/* --- ESTILOS PARA FORMULARIOS DINÁMICOS --- */
-
+/* --- ESTILOS PARA FORMULARIOS Y GRUPOS DE ENTRADA --- */
 .form-group {
   margin-bottom: 25px;
   border: 1px solid #e1e8ed;
@@ -87,190 +82,11 @@ p {
   padding-bottom: 10px;
 }
 
-.form-group table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 15px;
-  table-layout: fixed; /* Mantenemos esta línea crucial */
-}
-
-.form-group th,
-.form-group td {
-  border: 1px solid #e1e8ed;
-  padding: 10px;
-  text-align: left;
-  vertical-align: middle; /* Alinea verticalmente el contenido */
-}
-
-.form-group th {
-  background-color: #f7fafc;
-}
-
-/* Estilo unificado para inputs DENTRO de la tabla */
-.form-group td input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #cbd5e0;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-/* Botón 'Añadir' que está FUERA de la tabla */
-.form-group > button {
-  background-color: #2a6f97;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.form-group > button:hover {
-  background-color: #2c7da0;
-}
-
-/* Botón 'Eliminar' que está DENTRO de la tabla */
-.form-group .remove-btn {
-  width: 100%; /* <-- AJUSTE CLAVE: Forzamos al botón a ocupar el 100% de su celda */
-  background-color: #e53e3e;
-  color: white;
-  border: none;
-  padding: 8px 5px; /* Ajustamos padding para que sea similar al de los inputs */
-  border-radius: 4px; /* Mismo borde que los inputs */
-  cursor: pointer;
-  font-size: 14px; /* Misma fuente que los inputs */
-  font-weight: 600;
-}
-
-.form-group .remove-btn:hover {
-  background-color: #c53030;
-}
-
-.param-group {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
-/* --- AJUSTES DE ALINEACIÓN PARA COLUMNAS --- */
-
-#aulas-table th:nth-child(1),
-#grupos-table th:nth-child(1) {
-  width: 55%; /* Columna del Nombre */
-}
-
-#aulas-table th:nth-child(2),
-#grupos-table th:nth-child(2) {
-  width: 25%; /* Columna de Capacidad/Nº Estudiantes */
-}
-
-#aulas-table th:nth-child(3),
-#grupos-table th:nth-child(3) {
-  width: 20%; /* Columna de Acción (botón) */
-}
-
-/* Centramos el contenido de la última celda para que el botón se vea mejor */
-#aulas-table td:last-child,
-#grupos-table td:last-child {
-  text-align: center;
-  padding: 5px; /* Reducimos padding para dar más espacio al botón */
-}
-
-/* style.css */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
-
-/* Reset básico y box-sizing global */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: "Montserrat", sans-serif;
-  background-color: #f0f4f8;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
-.container {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 39, 74, 0.1);
-  width: 100%;
-  max-width: 800px;
-  padding: 30px 40px;
-}
-
-h1,
-h2 {
-  color: #012a4a;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-p {
-  text-align: center;
-  color: #4a6fa5;
-  margin-bottom: 25px;
-}
-
-.action-section {
-  text-align: center;
-  margin: 30px 0;
-}
-
-#solveBtn {
-  background-color: #4caf50;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#solveBtn:hover {
-  background-color: #45a049;
-}
-
-.results-section pre {
-  background: #eef6fb;
-  padding: 20px;
-  border-radius: 8px;
-  min-height: 150px;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  font-family: "Courier New", monospace;
-  text-align: left;
-}
-
-/* --- ESTILOS PARA FORMULARIOS DINÁMICOS --- */
-
-.form-group {
-  margin-bottom: 25px;
-  border: 1px solid #e1e8ed;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.form-group h3 {
-  text-align: left;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #2a6f97;
-  padding-bottom: 10px;
-}
-
-/* --- NUEVOS ESTILOS PARA SECCIONES DE PISO --- */
+/* Estilos para las nuevas secciones de piso */
 #aulas-por-piso-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 20px; /* Espacio entre cada sección de piso */
   margin-top: 20px;
 }
 
@@ -285,36 +101,56 @@ p {
   margin-bottom: 15px;
   text-align: left;
 }
-/* --- FIN DE NUEVOS ESTILOS --- */
 
-
-.form-group table {
+/* --- ESTILOS PARA LAS TABLAS DINÁMICAS --- */
+table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 15px;
-  table-layout: fixed;
+  table-layout: fixed; /* Evita que las columnas cambien de tamaño */
 }
 
-.form-group th,
-.form-group td {
+th, td {
   border: 1px solid #e1e8ed;
-  padding: 10px;
+  padding: 12px;
   text-align: left;
   vertical-align: middle;
 }
 
-.form-group th {
+th {
   background-color: #f7fafc;
+  font-weight: 600;
 }
 
-.form-group td input {
+td input {
   width: 100%;
   padding: 8px;
   border: 1px solid #cbd5e0;
   border-radius: 4px;
   font-size: 14px;
+  font-family: "Montserrat", sans-serif;
 }
 
+/* --- ESTILOS PARA BOTONES --- */
+
+/* Botón principal "Resolver" */
+#solveBtn {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#solveBtn:hover {
+  background-color: #45a049;
+}
+
+/* Botones "Añadir" (fuera de las tablas) */
 .form-group > button, .piso-section > button {
   background-color: #2a6f97;
   color: white;
@@ -322,13 +158,16 @@ p {
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .form-group > button:hover, .piso-section > button:hover {
   background-color: #2c7da0;
 }
 
-.form-group .remove-btn {
+/* Botón "Eliminar" (dentro de las tablas) */
+.remove-btn {
   width: 100%;
   background-color: #e53e3e;
   color: white;
@@ -338,16 +177,18 @@ p {
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
-.form-group .remove-btn:hover {
+.remove-btn:hover {
   background-color: #c53030;
 }
 
+/* --- ESTILOS PARA PARÁMETROS Y SUS BOTONES --- */
 .param-group {
   display: flex;
   align-items: center;
-  gap: 10px; /* Reducido para mejor ajuste */
+  gap: 15px;
   margin-bottom: 10px;
 }
 
@@ -358,18 +199,20 @@ p {
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .param-group button:hover {
     background-color: #024a7d;
 }
 
+/* --- AJUSTES DE ANCHO PARA COLUMNAS DE TABLA --- */
+table th:nth-child(1) { width: 55%; } /* Columna del Nombre */
+table th:nth-child(2), #horarios-table th:nth-child(2) { width: 25%; } /* Capacidad / Acción */
+table th:nth-child(3) { width: 20%; } /* Acción */
+#horarios-table th:nth-child(1) { width: 80%; } /* Horario (ocupa más espacio) */
 
-/* AJUSTES DE ALINEACIÓN PARA COLUMNAS */
-table th:nth-child(1) { width: 55%; }
-table th:nth-child(2) { width: 25%; }
-table th:nth-child(3) { width: 20%; }
-
+/* Centramos el contenido de la última celda para que el botón se vea mejor */
 table td:last-child {
   text-align: center;
   padding: 5px;

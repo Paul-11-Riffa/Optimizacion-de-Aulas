@@ -50,6 +50,34 @@
             </div>
 
             <div class="form-group">
+                <h3>Horarios Disponibles</h3>
+                <table id="horarios-table">
+                    <thead>
+                    <tr>
+                        <th>Horario (Ej: 07:00-09:15)</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" value="07:00-09:15"/></td>
+                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="09:15-11:30"/></td>
+                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+                        </tr>
+                         <tr>
+                            <td><input type="text" value="11:30-13:45"/></td>
+                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" onclick="agregarFilaHorario()">
+                    Añadir Horario
+                </button>
+            </div>
+            <div class="form-group">
                 <h3>Parámetros de Penalización</h3>
                 <div class="param-group">
                     <label for="delta">Umbral de Tolerancia (δ) en %:</label>
@@ -74,20 +102,18 @@
 </div>
 
 <script>
-    // --- NUEVA LÓGICA PARA PISOS Y AULAS ---
-
     /**
-     * Genera las secciones de entrada para cada piso basado en el valor del input 'numPisos'.
+     * Genera las secciones de entrada para cada piso.
      */
     function generarSeccionesPisos() {
         const container = document.getElementById('aulas-por-piso-container');
         const numPisos = parseInt(document.getElementById('numPisos').value, 10);
-        container.innerHTML = ''; // Limpia el contenedor antes de generar
+        container.innerHTML = '';
 
         if (numPisos > 0) {
             for (let i = 1; i <= numPisos; i++) {
                 const pisoSection = document.createElement('div');
-                pisoSection.className = 'piso-section'; // Clase para estilizar
+                pisoSection.className = 'piso-section';
                 pisoSection.innerHTML = `
               <h4>Piso ${i}</h4>
               <table id="aulas-piso-${i}-table">
@@ -111,15 +137,11 @@
 
     /**
      * Agrega una fila de aula a la tabla de un piso específico.
-     * @param {string} tableId - El ID de la tabla del piso.
-     * @param {number} pisoNum - El número del piso para generar el nombre del aula.
      */
     function agregarFilaAula(tableId, pisoNum) {
         const tableBody = document.querySelector(`#${tableId} tbody`);
         const numAulasActual = tableBody.rows.length;
         const newRow = tableBody.insertRow();
-
-        // Genera un nombre de aula único y predeterminado
         const nombreAulaPredeterminado = `P${pisoNum}_Aula_${numAulasActual + 1}`;
 
         newRow.innerHTML = `
@@ -128,8 +150,6 @@
           <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
         `;
     }
-
-    // --- LÓGICA EXISTENTE (MODIFICADA Y CONSERVADA) ---
 
     /**
      * Agrega una fila a la tabla de grupos.
@@ -145,63 +165,30 @@
     }
 
     /**
+     * NUEVA FUNCIÓN para agregar una fila a la tabla de horarios.
+     */
+    function agregarFilaHorario() {
+        const tableBody = document.querySelector(`#horarios-table tbody`);
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+          <td><input type="text" placeholder="Ej: 14:00-16:15" /></td>
+          <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+        `;
+    }
+
+
+    /**
      * Elimina la fila más cercana al botón presionado.
      */
     function eliminarFila(button) {
         button.closest("tr").remove();
     }
 
-    /**
-     * Carga datos de ejemplo al iniciar la página.
-     */
-    window.onload = () => {
-        // Carga 2 pisos por defecto y añade aulas de ejemplo
-        document.getElementById('numPisos').value = 2;
-        generarSeccionesPisos();
-        agregarFilaAulaConDatos('aulas-piso-1-table', 'P1_Aula_1', 45);
-        agregarFilaAulaConDatos('aulas-piso-2-table', 'P2_Aula_1', 60);
-
-        // Carga grupos de ejemplo
-        const gruposEjemplo = [
-            {nombre: "Grupo_Calculo", tamano: 35},
-            {nombre: "Grupo_Fisica", tamano: 50},
-        ];
-        gruposEjemplo.forEach((grupo) =>
-                agregarFilaGrupoConDatos(grupo.nombre, grupo.tamano)
-        );
-
-        // Genera las secciones de piso iniciales
-        generarSeccionesPisos();
-    };
-
-    // Funciones para cargar datos de ejemplo
-    function agregarFilaAulaConDatos(tableId, nombre, capacidad) {
-        const tableBody = document.querySelector(`#${tableId} tbody`);
-        const newRow = tableBody.insertRow();
-        newRow.innerHTML = `
-          <td><input type="text" value="${nombre}" /></td>
-          <td><input type="number" value="${capacidad}" min="1" /></td>
-          <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-        `;
-    }
-
-    function agregarFilaGrupoConDatos(nombre, tamano) {
-        const tableBody = document.querySelector(`#grupos-table tbody`);
-        const newRow = tableBody.insertRow();
-        newRow.innerHTML = `
-              <td><input type="text" value="${nombre}" /></td>
-              <td><input type="number" value="${tamano}" min="1" /></td>
-              <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-          `;
-    }
-
-
-    // --- LÓGICA PARA RESOLVER (MODIFICADA) ---
+    // --- LÓGICA PARA RESOLVER (MODIFICADA PARA ENVIAR HORARIOS) ---
     document.getElementById("solveBtn").addEventListener("click", () => {
         const resultsDiv = document.getElementById("results");
         resultsDiv.textContent = "Recolectando datos y enviando a Python...";
 
-        // NUEVA función para recolectar datos de todas las aulas en todos los pisos
         function recolectarAulas() {
             const aulas = [];
             const sections = document.querySelectorAll('.piso-section');
@@ -219,7 +206,6 @@
             return aulas;
         }
 
-        // Función para recolectar datos de la tabla de grupos
         function recolectarGrupos() {
             const data = [];
             const rows = document.querySelectorAll(`#grupos-table tbody tr`);
@@ -234,19 +220,39 @@
             return data;
         }
 
+        /**
+         * NUEVA FUNCIÓN para recolectar los horarios del usuario.
+         */
+        function recolectarHorarios() {
+            const data = [];
+            const rows = document.querySelectorAll(`#horarios-table tbody tr`);
+            rows.forEach((row) => {
+                const input = row.querySelector("input");
+                const horario = input.value.trim();
+                if (horario) { // Solo añade si no está vacío
+                    data.push(horario);
+                }
+            });
+            return data;
+        }
+
+
         const aulas = recolectarAulas();
         const grupos = recolectarGrupos();
+        const horarios = recolectarHorarios(); // <-- Obtenemos los horarios personalizados
         const parametros = {
             delta: parseFloat(document.getElementById("delta").value) / 100,
             lambda: parseFloat(document.getElementById("lambda").value),
         };
 
-        if (aulas.length === 0 || grupos.length === 0) {
-            resultsDiv.textContent = "Error: Debes definir al menos un aula y un grupo.";
+        // Verificamos que todos los datos necesarios estén presentes
+        if (aulas.length === 0 || grupos.length === 0 || horarios.length === 0) {
+            resultsDiv.textContent = "Error: Debes definir al menos un aula, un grupo y un horario.";
             return;
         }
 
-        const payload = {aulas, grupos, parametros};
+        // Añadimos los horarios al payload que se envía al servidor
+        const payload = {aulas, grupos, horarios, parametros};
         resultsDiv.textContent = "Procesando... El servidor de Python está calculando la solución.";
 
         fetch("http://127.0.0.1:5000/solve", {
@@ -254,26 +260,25 @@
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload),
         })
-                .then((response) => response.ok ? response.json() : Promise.reject(response))
-                .then((data) => {
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-                    let output = `Estado de la Solución: ${data.estado}\n`;
-                    if (data.valor_objetivo !== null) {
-                        output += `Valor de la Función Objetivo (Z): ${data.valor_objetivo.toFixed(2)}\n\n`;
-                    }
-                    output += "--- Asignaciones Óptimas ---\n";
-                    output += data.resultados.length > 0 ? data.resultados.join("\n") : "No se encontraron asignaciones.";
-                    resultsDiv.textContent = output;
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    resultsDiv.textContent = `Error al procesar la solicitud. Asegúrate de que el script 'optimizacion.py' se está ejecutando.\n\nDetalles: ${error.message || 'Error de red.'}`;
-                });
+            .then((response) => response.ok ? response.json() : Promise.reject(response))
+            .then((data) => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                let output = `Estado de la Solución: ${data.estado}\n`;
+                if (data.valor_objetivo !== null) {
+                    output += `Valor de la Función Objetivo (Z): ${data.valor_objetivo.toFixed(2)}\n\n`;
+                }
+                output += "--- Asignaciones Óptimas ---\n";
+                output += data.resultados.length > 0 ? data.resultados.join("\n") : "No se encontraron asignaciones.";
+                resultsDiv.textContent = output;
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                resultsDiv.textContent = `Error al procesar la solicitud. Asegúrate de que el script 'optimizacion.py' se está ejecutando.\n\nDetalles: ${error.message || 'Error de red.'}`;
+            });
     });
 
-    // Llama a generarSeccionesPisos al cargar para que la interfaz no esté vacía
     document.addEventListener('DOMContentLoaded', generarSeccionesPisos);
 </script>
 </body>
