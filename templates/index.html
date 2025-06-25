@@ -59,18 +59,24 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="text" value="07:00-09:15"/></td>
-                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" value="09:15-11:30"/></td>
-                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                        </tr>
-                         <tr>
-                            <td><input type="text" value="11:30-13:45"/></td>
-                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                        </tr>
+                    <tr>
+                        <td><input type="text" value="07:00-09:15"/></td>
+                        <td>
+                            <button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="09:15-11:30"/></td>
+                        <td>
+                            <button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="11:30-13:45"/></td>
+                        <td>
+                            <button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
                 <button type="button" onclick="agregarFilaHorario()">
@@ -255,7 +261,7 @@
         const payload = {aulas, grupos, horarios, parametros};
         resultsDiv.textContent = "Procesando... El servidor de Python está calculando la solución.";
 
-        fetch("http://127.0.0.1:5000/solve", {
+        fetch("/solve", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload),
