@@ -255,7 +255,7 @@
         const payload = {aulas, grupos, horarios, parametros};
         resultsDiv.textContent = "Procesando... El servidor de Python está calculando la solución.";
 
-        fetch("http://127.0.0.1:5000/solve", {
+        fetch("/solve", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload),
