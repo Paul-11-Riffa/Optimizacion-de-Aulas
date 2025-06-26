@@ -12,14 +12,10 @@
 <body>
 <div class="container">
     <h1>Optimizador de Asignación de Aulas (MILP)</h1>
-    <p>
-        Define los datos de tu problema y haz clic en "Resolver" para encontrar
-        la asignación óptima.
-    </p>
 
     <div class="main-content">
         <div class="input-section">
-            <h2>1. Datos del Problema</h2>
+            <h2>Datos del Problema</h2>
 
             <div class="form-group">
                 <h3>Aulas Disponibles</h3>
@@ -54,23 +50,12 @@
                 <table id="horarios-table">
                     <thead>
                     <tr>
-                        <th>Horario (Ej: 07:00-09:15)</th>
+                        <th>Horario </th>
                         <th>Acción</th>
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="text" value="07:00-09:15"/></td>
-                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" value="09:15-11:30"/></td>
-                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                        </tr>
-                         <tr>
-                            <td><input type="text" value="11:30-13:45"/></td>
-                            <td><button class="remove-btn" onclick="eliminarFila(this)">Eliminar</button></td>
-                        </tr>
+
                     </tbody>
                 </table>
                 <button type="button" onclick="agregarFilaHorario()">
