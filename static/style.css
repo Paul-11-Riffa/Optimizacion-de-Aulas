@@ -217,3 +217,123 @@ table td:last-child {
   text-align: center;
   padding: 5px;
 }
+
+/* --- ESTILOS PARA PARÁMETROS CON SLIDERS (AÑADIR AL FINAL) --- */
+
+.param-group {
+  display: flex;
+  flex-direction: column; /* Apilamos label y slider */
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.param-group label {
+  font-weight: 600;
+  color: #012a4a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+}
+
+/* --- Estilos para los Sliders (input type=range) --- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #dbeaf2; /* Color de la barra del slider */
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Estilo del "pulgar" o manejador del slider para Chrome/Safari */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #2a6f97; /* Color del manejador */
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #024a7d; /* Color al pasar el mouse */
+}
+
+/* Estilo del "pulgar" para Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #2a6f97;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: #024a7d;
+}
+
+.slider-value {
+  font-weight: 600;
+  color: #012a4a;
+  background-color: #eef6fb;
+  padding: 5px 12px;
+  border-radius: 6px;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* --- Estilos para los Tooltips (Explicaciones emergentes) --- */
+.tooltip-trigger {
+  display: inline-block;
+  background-color: #a0aec0;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-weight: bold;
+  cursor: help;
+  position: relative;
+}
+
+.tooltip-trigger::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%; /* Aparece arriba del '?' */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #012a4a;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: normal;
+  width: 280px; /* Ancho del tooltip */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.tooltip-trigger:hover::after {
+  opacity: 1;
+  visibility: visible;
+}

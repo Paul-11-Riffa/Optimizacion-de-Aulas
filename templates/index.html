@@ -50,7 +50,7 @@
                 <table id="horarios-table">
                     <thead>
                     <tr>
-                        <th>Horario </th>
+                        <th>Horario</th>
                         <th>Acción</th>
                     </tr>
                     </thead>
@@ -63,14 +63,31 @@
                 </button>
             </div>
             <div class="form-group">
-                <h3>Parámetros de Penalización</h3>
+                <h3>Parámetros de Optimización</h3>
+
                 <div class="param-group">
-                    <label for="delta">Umbral de Tolerancia (δ) en %:</label>
-                    <input type="number" id="delta" value="20" min="0" max="100"/>
+                    <label for="delta">
+                        Umbral de Tolerancia (δ):
+                        <span class="tooltip-trigger"
+                              data-tooltip="Define qué tan 'llena' puede quedar un aula. Un 10% significa que se permite que hasta un 10% de la capacidad del aula quede sin usar sin recibir penalización.">[?]</span>
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="delta" min="0" max="50" value="20" oninput="updateSliderValue(this)">
+                        <span class="slider-value" id="delta-value">20%</span>
+                    </div>
                 </div>
+
                 <div class="param-group">
-                    <label for="lambda">Factor de Penalización (λ):</label>
-                    <input type="number" id="lambda" value="1.0" step="0.1" min="0"/>
+                    <label for="lambda">
+                        Factor de Penalización (λ):
+                        <span class="tooltip-trigger"
+                              data-tooltip="Controla qué tan 'costoso' es dejar asientos vacíos por encima del umbral de tolerancia. Un valor alto prioriza llenar las aulas al máximo.">[?]</span>
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="lambda" min="0" max="10" value="1.0" step="0.1"
+                               oninput="updateSliderValue(this)">
+                        <span class="slider-value" id="lambda-value">1.0</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,7 +96,7 @@
             <button id="solveBtn">Resolver con Python</button>
         </div>
 
-        <div class="results-section">
+         <div class="results-section">
             <h2>Resultados de la Optimización</h2>
             <pre id="results">Esperando la ejecución...</pre>
         </div>
