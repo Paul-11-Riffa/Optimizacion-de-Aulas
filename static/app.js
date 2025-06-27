@@ -1,17 +1,34 @@
-// /static/app.js - VERSIÓN FINAL
+// /static/app.js - VERSIÓN FINAL COMENTADA
 
 /**
- * Genera las secciones de entrada para cada piso.
+ * =====================================================================================
+ * FUNCIONES PARA MANEJAR LA INTERFAZ DE USUARIO (UI)
+ * Estas funciones se encargan de crear y eliminar elementos dinámicamente en la página.
+ * =====================================================================================
+ */
+
+/**
+ * Genera las secciones de entrada para cada piso según el número que el usuario especifique.
+ * Se activa al cargar la página y cada vez que el usuario cambia el valor del input "Número de Pisos".
  */
 function generarSeccionesPisos() {
+    // Obtiene el contenedor principal donde se añadirán las secciones de los pisos.
     const container = document.getElementById('aulas-por-piso-container');
+    // Lee el valor del input, lo convierte a un número entero.
     const numPisos = parseInt(document.getElementById('numPisos').value, 10);
+    // Limpia el contenido previo para no duplicar secciones si se vuelve a llamar.
     container.innerHTML = '';
 
+    // Solo procede si el número de pisos es mayor que cero.
     if (numPisos > 0) {
+        // Bucle que se repite una vez por cada piso.
         for (let i = 1; i <= numPisos; i++) {
+            // Crea un nuevo elemento <div> para la sección del piso.
             const pisoSection = document.createElement('div');
+            // Le asigna una clase para poder aplicarle estilos CSS.
             pisoSection.className = 'piso-section';
+            // Inserta el HTML necesario para la tabla de aulas y el botón de añadir.
+            // Se usan plantillas de texto (template literals) para construir el HTML fácilmente.
             pisoSection.innerHTML = `
               <h4>Piso ${i}</h4>
               <table id="aulas-piso-${i}-table">
@@ -28,20 +45,28 @@ function generarSeccionesPisos() {
                 Añadir Aula al Piso ${i}
               </button>
             `;
+            // Añade la sección del piso recién creada al contenedor principal.
             container.appendChild(pisoSection);
         }
     }
 }
 
 /**
- * Agrega una fila de aula a la tabla de un piso específico.
+ * Agrega una nueva fila a la tabla de aulas de un piso específico.
+ * @param {string} tableId - El ID de la tabla a la que se añadirá la fila.
+ * @param {number} pisoNum - El número del piso, para generar un nombre de aula predeterminado.
  */
 function agregarFilaAula(tableId, pisoNum) {
+    // Selecciona el cuerpo (tbody) de la tabla específica.
     const tableBody = document.querySelector(`#${tableId} tbody`);
+    // Cuenta cuántas filas ya existen para generar un nombre único.
     const numAulasActual = tableBody.rows.length;
+    // Inserta una nueva fila vacía en la tabla.
     const newRow = tableBody.insertRow();
+    // Genera un nombre de aula predeterminado (ej: P1_Aula_1).
     const nombreAulaPredeterminado = `P${pisoNum}_Aula_${numAulasActual + 1}`;
 
+    // Rellena la nueva fila con las celdas (td) y los inputs correspondientes.
     newRow.innerHTML = `
       <td><input type="text" value="${nombreAulaPredeterminado}" /></td>
       <td><input type="number" placeholder="Ej: 45" min="1" /></td>
@@ -50,7 +75,7 @@ function agregarFilaAula(tableId, pisoNum) {
 }
 
 /**
- * Agrega una fila a la tabla de grupos.
+ * Agrega una nueva fila a la tabla de grupos de estudiantes.
  */
 function agregarFilaGrupo() {
     const tableBody = document.querySelector(`#grupos-table tbody`);
@@ -63,7 +88,7 @@ function agregarFilaGrupo() {
 }
 
 /**
- * Agrega una fila a la tabla de horarios.
+ * Agrega una nueva fila a la tabla de horarios disponibles.
  */
 function agregarFilaHorario() {
     const tableBody = document.querySelector(`#horarios-table tbody`);
@@ -75,65 +100,95 @@ function agregarFilaHorario() {
 }
 
 /**
- * Elimina la fila más cercana al botón presionado.
+ * Elimina la fila (tr) que contiene el botón que fue presionado.
+ * @param {HTMLElement} button - El botón "Eliminar" que fue clickeado.
  */
 function eliminarFila(button) {
+    // .closest('tr') busca el ancestro <tr> más cercano al botón y lo elimina.
     button.closest("tr").remove();
 }
 
 /**
- * (NUEVA FUNCIÓN) Actualiza el valor visual del slider.
+ * Actualiza el texto que muestra el valor actual de un slider.
+ * Se llama cada vez que el usuario mueve el manejador del slider.
+ * @param {HTMLInputElement} slider - El elemento input de tipo "range" que cambió.
  */
 function updateSliderValue(slider) {
+    // Construye el ID del elemento <span> que muestra el valor (ej: 'delta-value').
     const displayId = `${slider.id}-value`;
     const display = document.getElementById(displayId);
+    // Si el elemento existe, actualiza su contenido.
     if (display) {
+        // Añade un '%' al final si es el slider de 'delta'.
         display.textContent = slider.id === 'delta' ? `${slider.value}%` : slider.value;
     }
 }
 
-// --- LÓGICA PRINCIPAL ---
+/**
+ * =====================================================================================
+ * LÓGICA PRINCIPAL DE LA APLICACIÓN
+ * Se encarga de la inicialización y de la comunicación con el backend.
+ * =====================================================================================
+ */
 
-// Se ejecuta cuando el contenido de la página está listo.
+// --- INICIALIZACIÓN DE LA PÁGINA ---
+// Este evento se dispara cuando todo el HTML ha sido cargado y parseado por el navegador.
 document.addEventListener('DOMContentLoaded', () => {
-    // Genera las secciones de pisos iniciales.
+    // 1. Genera las secciones de pisos iniciales (basado en el valor por defecto del input).
     generarSeccionesPisos();
 
-    // (AÑADIDO) Inicializa los valores de los sliders para que se muestren correctamente al cargar.
+    // 2. Inicializa los valores visuales de los sliders para que muestren su valor por defecto al cargar.
     updateSliderValue(document.getElementById('delta'));
     updateSliderValue(document.getElementById('lambda'));
 });
 
-// Event listener para el botón "Resolver".
+// --- MANEJO DEL EVENTO DE RESOLVER ---
+// Se añade un "escuchador de eventos" al botón "Resolver". El código dentro se ejecutará cada vez que se haga clic.
+// --- MODIFICACIÓN: Event listener del botón "Resolver" mejorado ---
 document.getElementById("solveBtn").addEventListener("click", () => {
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.textContent = "Recolectando datos y enviando a Python...";
 
+    // --- 1. PREPARACIÓN DE LA UI PARA LA CARGA ---
+    const solveButton = document.getElementById("solveBtn");
+    const resultsDiv = document.getElementById("results");
+
+    // Deshabilita el botón para prevenir clics múltiples
+    solveButton.disabled = true;
+    solveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...'; // Feedback visual
+
+    // Limpia los resultados anteriores
+    resultsDiv.textContent = "Recolectando y validando datos...";
+    resultsDiv.className = 'results-feedback'; // Clase para estilo neutro
+
+    // --- 2. RECOLECCIÓN Y VALIDACIÓN DE DATOS EN EL CLIENTE ---
+
+    // (Las funciones de recolección ahora incluyen validación más estricta)
     function recolectarAulas() {
         const aulas = [];
-        const sections = document.querySelectorAll('.piso-section');
-        sections.forEach(section => {
-            const rows = section.querySelectorAll("tbody tr");
-            rows.forEach(row => {
-                const inputs = row.querySelectorAll("input");
-                const nombre = inputs[0].value;
-                const capacidad = parseInt(inputs[1].value, 10);
-                if (nombre && capacidad > 0) {
-                    aulas.push({nombre, capacidad});
-                }
-            });
+        document.querySelectorAll('.piso-section tbody tr').forEach(row => {
+            const nombreInput = row.querySelector('input[type="text"]');
+            const capacidadInput = row.querySelector('input[type="number"]');
+
+            const nombre = nombreInput.value.trim();
+            const capacidad = parseInt(capacidadInput.value, 10);
+
+            // Se añade el aula solo si tiene nombre y una capacidad numérica y positiva
+            if (nombre && !isNaN(capacidad) && capacidad > 0) {
+                aulas.push({nombre, capacidad});
+            }
         });
         return aulas;
     }
 
     function recolectarGrupos() {
         const data = [];
-        const rows = document.querySelectorAll(`#grupos-table tbody tr`);
-        rows.forEach((row) => {
-            const inputs = row.querySelectorAll("input");
-            const nombre = inputs[0].value;
-            const tamano = parseInt(inputs[1].value, 10);
-            if (nombre && tamano > 0) {
+        document.querySelectorAll('#grupos-table tbody tr').forEach(row => {
+            const nombreInput = row.querySelector('input[type="text"]');
+            const tamanoInput = row.querySelector('input[type="number"]');
+
+            const nombre = nombreInput.value.trim();
+            const tamano = parseInt(tamanoInput.value, 10);
+
+            if (nombre && !isNaN(tamano) && tamano > 0) {
                 data.push({nombre, tamano});
             }
         });
@@ -142,9 +197,8 @@ document.getElementById("solveBtn").addEventListener("click", () => {
 
     function recolectarHorarios() {
         const data = [];
-        const rows = document.querySelectorAll(`#horarios-table tbody tr`);
-        rows.forEach((row) => {
-            const input = row.querySelector("input");
+        document.querySelectorAll('#horarios-table tbody tr').forEach(row => {
+            const input = row.querySelector("input[type='text']");
             const horario = input.value.trim();
             if (horario) {
                 data.push(horario);
@@ -161,35 +215,59 @@ document.getElementById("solveBtn").addEventListener("click", () => {
         lambda: parseFloat(document.getElementById("lambda").value),
     };
 
+    // Validación en el cliente para dar feedback rápido
     if (aulas.length === 0 || grupos.length === 0 || horarios.length === 0) {
-        resultsDiv.textContent = "Error: Debes definir al menos un aula, un grupo y un horario.";
+        resultsDiv.textContent = "Error: Debes definir al menos un aula, un grupo y un horario con datos válidos.";
+        resultsDiv.className = 'results-feedback error'; // Clase para estilo de error
+
+        // Reactiva el botón si hay un error de validación
+        solveButton.disabled = false;
+        solveButton.innerHTML = 'Resolver con Python';
         return;
     }
 
     const payload = {aulas, grupos, horarios, parametros};
-    resultsDiv.textContent = "Procesando... El servidor de Python está calculando la solución.";
 
-    // (CORREGIDO) Se usa una ruta relativa para que funcione tanto en local como en Vercel.
-    fetch("http://127.0.0.1:5000/solve", {
+    // --- 3. LLAMADA A LA API CON FETCH ---
+    fetch("/solve", { // Ruta relativa para funcionar en cualquier entorno
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(payload),
     })
-    .then((response) => response.ok ? response.json() : Promise.reject(response))
+    .then(async (response) => {
+        // --- MODIFICACIÓN: Mejor manejo de respuestas de error de la API ---
+        const responseData = await response.json();
+        if (!response.ok) {
+            // Si la respuesta no es 2xx, construye un error con el mensaje del backend
+            const error = new Error(responseData.error || 'Ocurrió un error desconocido');
+            error.status = response.status;
+            throw error;
+        }
+        return responseData;
+    })
     .then((data) => {
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        let output = `Estado de la Solución: ${data.estado}\n`;
+        // --- 4. RENDERIZADO DE RESULTADOS EXITOSOS ---
+        resultsDiv.className = 'results-feedback success'; // Clase para estilo de éxito
+        let output = `<strong>Estado:</strong> ${data.estado}\n`;
         if (data.valor_objetivo !== null) {
-            output += `Valor de la Función Objetivo (Z): ${data.valor_objetivo.toFixed(2)}\n\n`;
+            output += `<strong>Valor Objetivo (Z):</strong> ${data.valor_objetivo.toFixed(2)}\n\n`;
         }
-        output += "--- Asignaciones Óptimas ---\n";
+        output += "<strong>--- Asignaciones Óptimas ---</strong>\n";
         output += data.resultados.length > 0 ? data.resultados.join("\n") : "No se encontraron asignaciones.";
-        resultsDiv.textContent = output;
+
+        // Usamos innerHTML para que las etiquetas <strong> se rendericen
+        resultsDiv.innerHTML = output.replace(/\n/g, '<br>');
     })
     .catch((error) => {
-        console.error("Error:", error);
-        resultsDiv.textContent = `Error al procesar la solicitud. Asegúrate de que el script 'optimizacion.py' se está ejecutando.\n\nDetalles: ${error.message || 'Error de red.'}`;
+        // --- 5. MANEJO DE ERRORES (de red o de la API) ---
+        console.error("Error en la solicitud:", error);
+        resultsDiv.className = 'results-feedback error';
+        resultsDiv.textContent = `Error: ${error.message}`;
+    })
+    .finally(() => {
+        // --- 6. RESTAURACIÓN DE LA UI ---
+        // Este bloque se ejecuta siempre, tanto si la petición tuvo éxito como si falló.
+        solveButton.disabled = false; // Reactiva el botón
+        solveButton.innerHTML = 'Resolver con Python';
     });
 });

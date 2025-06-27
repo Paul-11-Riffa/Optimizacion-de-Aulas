@@ -1,68 +1,91 @@
 /* style.css */
+
+/* --- IMPORTACIÓN DE FUENTES EXTERNAS --- */
+/* Se importa la fuente 'Montserrat' desde Google Fonts en dos grosores: 400 (normal) y 600 (semi-negrita). */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 
-/* Reset básico y configuración global */
+/* --- RESET BÁSICO Y CONFIGURACIÓN GLOBAL --- */
+/* El selector universal '*' aplica estos estilos a TODOS los elementos de la página. */
 * {
+  /* box-sizing: border-box; asegura que el padding y el borde se incluyan en el ancho y alto total del elemento,
+     lo que facilita mucho el manejo de las dimensiones. */
   box-sizing: border-box;
+  /* Se eliminan los márgenes y paddings por defecto que aplican los navegadores. */
   margin: 0;
   padding: 0;
 }
 
+/* --- ESTILOS PARA EL CUERPO (BODY) --- */
 body {
+  /* Se establece la fuente principal para toda la página. Si Montserrat no carga, usará una fuente sans-serif genérica. */
   font-family: "Montserrat", sans-serif;
-  background-color: #f0f4f8; /* Un fondo gris azulado suave */
+  /* Un color de fondo suave para toda la página. */
+  background-color: #f0f4f8;
+  /* Color de texto por defecto. */
   color: #333;
+  /* 'display: flex' y 'justify-content: center' centran horizontalmente el contenido principal. */
   display: flex;
   justify-content: center;
+  /* Un poco de espacio alrededor del contenedor principal. */
   padding: 40px;
+  /* Altura de línea para mejorar la legibilidad del texto. 1.6 veces el tamaño de la fuente. */
   line-height: 1.6;
 }
 
+/* --- ESTILO DEL CONTENEDOR PRINCIPAL --- */
 .container {
+  /* Fondo blanco para el contenedor donde va todo el contenido. */
   background: #ffffff;
+  /* Bordes redondeados. */
   border-radius: 12px;
+  /* Una sombra sutil para darle profundidad y destacarlo del fondo. */
   box-shadow: 0 8px 24px rgba(0, 39, 74, 0.1);
+  /* Ocupa el 100% del ancho disponible... */
   width: 100%;
+  /* ...pero con un máximo de 800px para que no se estire demasiado en pantallas grandes. */
   max-width: 800px;
+  /* Espacio interno para que el contenido no se pegue a los bordes. */
   padding: 30px 40px;
 }
 
 /* --- TÍTULOS Y TEXTOS --- */
+/* Estilo común para todos los encabezados. */
 h1, h2, h3, h4 {
-  color: #012a4a; /* Azul oscuro para los títulos */
+  color: #012a4a; /* Un azul oscuro para dar jerarquía visual. */
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Espacio debajo del título principal. */
 }
 
 h2 {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 25px; /* Espacio debajo de los subtítulos de sección. */
 }
 
 p {
   text-align: center;
-  color: #4a6fa5; /* Un azul más suave para los párrafos */
+  color: #4a6fa5; /* Un azul más suave para el texto descriptivo. */
   margin-bottom: 30px;
 }
 
 /* --- SECCIONES PRINCIPALES --- */
 .action-section {
-  text-align: center;
-  margin: 30px 0;
+  text-align: center; /* Centra el botón "Resolver". */
+  margin: 30px 0; /* Espacio vertical arriba y abajo de la sección. */
 }
 
+/* Estilo para el bloque <pre> que muestra los resultados. */
 .results-section pre {
-  background: #eef6fb; /* Fondo azul muy claro para los resultados */
+  background: #eef6fb; /* Fondo azul muy claro para destacar el bloque. */
   padding: 20px;
   border-radius: 8px;
-  min-height: 150px;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  font-family: "Courier New", monospace;
-  text-align: left;
+  min-height: 150px; /* Altura mínima para que el bloque sea visible aunque esté vacío. */
+  overflow-x: auto; /* Añade una barra de scroll horizontal si el contenido es muy largo. */
+  white-space: pre-wrap; /* Mantiene los espacios y saltos de línea del texto, pero ajusta las líneas si es necesario. */
+  font-family: "Courier New", monospace; /* Fuente monoespaciada, ideal para mostrar código o texto preformateado. */
+  text-align: left; /* Alinea el texto de los resultados a la izquierda. */
   line-height: 1.5;
   color: #012a4a;
 }
@@ -70,28 +93,28 @@ p {
 /* --- ESTILOS PARA FORMULARIOS Y GRUPOS DE ENTRADA --- */
 .form-group {
   margin-bottom: 25px;
-  border: 1px solid #e1e8ed;
+  border: 1px solid #e1e8ed; /* Un borde sutil para agrupar visualmente los campos. */
   padding: 20px;
   border-radius: 8px;
 }
 
 .form-group h3 {
-  text-align: left;
+  text-align: left; /* Alinea los títulos de grupo a la izquierda. */
   margin-bottom: 15px;
-  border-bottom: 2px solid #2a6f97;
+  border-bottom: 2px solid #2a6f97; /* Una línea inferior para separar el título del contenido. */
   padding-bottom: 10px;
 }
 
-/* Estilos para las nuevas secciones de piso */
+/* Estilos para las nuevas secciones de piso que se generan dinámicamente. */
 #aulas-por-piso-container {
   display: flex;
-  flex-direction: column;
-  gap: 20px; /* Espacio entre cada sección de piso */
+  flex-direction: column; /* Apila las secciones de piso una encima de otra. */
+  gap: 20px; /* Espacio entre cada sección de piso. */
   margin-top: 20px;
 }
 
 .piso-section {
-  border: 1px dashed #a0aec0;
+  border: 1px dashed #a0aec0; /* Borde punteado para diferenciarlo de los form-group. */
   padding: 15px;
   border-radius: 8px;
 }
@@ -104,55 +127,57 @@ p {
 
 /* --- ESTILOS PARA LAS TABLAS DINÁMICAS --- */
 table {
-  width: 100%;
-  border-collapse: collapse;
+  width: 100%; /* La tabla ocupa todo el ancho de su contenedor. */
+  border-collapse: collapse; /* Las celdas comparten bordes. */
   margin-bottom: 15px;
-  table-layout: fixed; /* Evita que las columnas cambien de tamaño */
+  table-layout: fixed; /* Evita que las columnas cambien de tamaño automáticamente según el contenido. */
 }
 
 th, td {
   border: 1px solid #e1e8ed;
   padding: 12px;
-  text-align: left;
-  vertical-align: middle;
+  text-align: left; /* Alineación del texto por defecto. */
+  vertical-align: middle; /* Alinea verticalmente el contenido de las celdas al centro. */
 }
 
 th {
-  background-color: #f7fafc;
-  font-weight: 600;
+  background-color: #f7fafc; /* Un fondo ligeramente gris para los encabezados. */
+  font-weight: 600; /* Texto en semi-negrita. */
 }
 
+/* Estilo para los campos de entrada dentro de las celdas de la tabla. */
 td input {
   width: 100%;
   padding: 8px;
   border: 1px solid #cbd5e0;
   border-radius: 4px;
   font-size: 14px;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif; /* Mantiene la consistencia de la fuente. */
 }
 
 /* --- ESTILOS PARA BOTONES --- */
 
 /* Botón principal "Resolver" */
 #solveBtn {
-  background-color: #4caf50;
+  background-color: #4caf50; /* Verde, indica una acción positiva/principal. */
   color: white;
-  padding: 12px 25px;
+  padding: 12px 25px; /* Más grande que los otros botones. */
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  cursor: pointer; /* Cambia el cursor a una mano para indicar que es clickeable. */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color. */
 }
 
 #solveBtn:hover {
-  background-color: #45a049;
+  background-color: #45a049; /* Un verde ligeramente más oscuro al pasar el mouse. */
 }
 
 /* Botones "Añadir" (fuera de las tablas) */
+/* El selector '>' se asegura de que solo se aplique a los botones que son hijos directos. */
 .form-group > button, .piso-section > button {
-  background-color: #2a6f97;
+  background-color: #2a6f97; /* Azul, indica una acción secundaria. */
   color: white;
   border: none;
   padding: 8px 15px;
@@ -169,7 +194,7 @@ td input {
 /* Botón "Eliminar" (dentro de las tablas) */
 .remove-btn {
   width: 100%;
-  background-color: #e53e3e;
+  background-color: #e53e3e; /* Rojo, indica una acción destructiva. */
   color: white;
   border: none;
   padding: 8px 5px;
@@ -184,14 +209,7 @@ td input {
   background-color: #c53030;
 }
 
-/* --- ESTILOS PARA PARÁMETROS Y SUS BOTONES --- */
-.param-group {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
+/* --- ESTILOS PARA PARÁMETROS Y SUS BOTONES (VERSIÓN ANTIGUA CON BOTONES) --- */
 .param-group button {
     background-color: #012a4a;
     color: white;
@@ -206,24 +224,31 @@ td input {
     background-color: #024a7d;
 }
 
-/* --- AJUSTES DE ANCHO PARA COLUMNAS DE TABLA --- */
-table th:nth-child(1) { width: 55%; } /* Columna del Nombre */
-table th:nth-child(2), #horarios-table th:nth-child(2) { width: 25%; } /* Capacidad / Acción */
-table th:nth-child(3) { width: 20%; } /* Acción */
-#horarios-table th:nth-child(1) { width: 80%; } /* Horario (ocupa más espacio) */
 
-/* Centramos el contenido de la última celda para que el botón se vea mejor */
+/* --- AJUSTES DE ANCHO PARA COLUMNAS DE TABLA --- */
+/* Se usan selectores de pseudo-clase para apuntar a columnas específicas. */
+table th:nth-child(1) { width: 55%; } /* Columna del Nombre */
+table th:nth-child(2) { width: 25%; } /* Capacidad */
+table th:nth-child(3) { width: 20%; } /* Acción */
+
+/* Anchos específicos para la tabla de horarios. */
+#horarios-table th:nth-child(1) { width: 80%; } /* Horario */
+#horarios-table th:nth-child(2) { width: 20%; } /* Acción */
+
+/* Centramos el contenido de la última celda para que el botón "Eliminar" se vea mejor. */
 table td:last-child {
   text-align: center;
   padding: 5px;
 }
 
-/* --- ESTILOS PARA PARÁMETROS CON SLIDERS (AÑADIR AL FINAL) --- */
 
+/* --- ESTILOS PARA PARÁMETROS CON SLIDERS (AÑADIDOS POSTERIORMENTE) --- */
+
+/* Estilo del contenedor del grupo de parámetros (label + slider). */
 .param-group {
   display: flex;
-  flex-direction: column; /* Apilamos label y slider */
-  align-items: flex-start;
+  flex-direction: column; /* Apila la etiqueta y el slider verticalmente. */
+  align-items: flex-start; /* Alinea los elementos a la izquierda. */
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -232,10 +257,11 @@ table td:last-child {
   font-weight: 600;
   color: #012a4a;
   display: flex;
-  align-items: center;
+  align-items: center; /* Centra verticalmente el texto de la etiqueta y el tooltip. */
   gap: 8px;
 }
 
+/* Contenedor que agrupa el slider y el valor numérico. */
 .slider-container {
   display: flex;
   align-items: center;
@@ -244,35 +270,36 @@ table td:last-child {
 }
 
 /* --- Estilos para los Sliders (input type=range) --- */
+/* Se resetea la apariencia por defecto del navegador para poder aplicar estilos personalizados. */
 input[type="range"] {
-  -webkit-appearance: none;
+  -webkit-appearance: none; /* Para Chrome/Safari */
   appearance: none;
   width: 100%;
   height: 8px;
-  background: #dbeaf2; /* Color de la barra del slider */
+  background: #dbeaf2; /* Color de la barra del slider. */
   border-radius: 5px;
-  outline: none;
+  outline: none; /* Quita el borde azul al hacer foco. */
   cursor: pointer;
 }
 
-/* Estilo del "pulgar" o manejador del slider para Chrome/Safari */
+/* Estilo del "pulgar" o manejador del slider para Chrome/Safari. */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
-  background: #2a6f97; /* Color del manejador */
-  border-radius: 50%;
+  background: #2a6f97; /* Color del manejador. */
+  border-radius: 50%; /* Lo hace circular. */
   border: 2px solid white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: background 0.2s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  background: #024a7d; /* Color al pasar el mouse */
+  background: #024a7d; /* Color al pasar el mouse. */
 }
 
-/* Estilo del "pulgar" para Firefox */
+/* Estilo del "pulgar" para Firefox (necesita su propio selector). */
 input[type="range"]::-moz-range-thumb {
   width: 20px;
   height: 20px;
@@ -288,52 +315,80 @@ input[type="range"]::-moz-range-thumb:hover {
   background: #024a7d;
 }
 
+/* Estilo para el recuadro que muestra el valor actual del slider. */
 .slider-value {
   font-weight: 600;
   color: #012a4a;
   background-color: #eef6fb;
   padding: 5px 12px;
   border-radius: 6px;
-  min-width: 50px;
+  min-width: 50px; /* Ancho mínimo para que no cambie de tamaño drásticamente. */
   text-align: center;
 }
 
 /* --- Estilos para los Tooltips (Explicaciones emergentes) --- */
+/* Estilo para el icono '?' del tooltip. */
 .tooltip-trigger {
   display: inline-block;
-  background-color: #a0aec0;
+  background-color: #a0aec0; /* Un gris neutro. */
   color: white;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   text-align: center;
-  line-height: 20px;
+  line-height: 20px; /* Centra verticalmente el '?'. */
   font-weight: bold;
-  cursor: help;
-  position: relative;
+  cursor: help; /* Muestra un cursor de ayuda. */
+  position: relative; /* Necesario para posicionar el texto del tooltip. */
 }
 
+/* Estilo para el texto emergente del tooltip, que se muestra al hacer hover. */
+/* Se usa el pseudo-elemento ::after para crear el cuadro de texto. */
 .tooltip-trigger::after {
-  content: attr(data-tooltip);
+  content: attr(data-tooltip); /* Toma el texto del atributo 'data-tooltip' del HTML. */
   position: absolute;
-  bottom: 125%; /* Aparece arriba del '?' */
+  bottom: 125%; /* Lo posiciona arriba del icono '?'. */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); /* Lo centra horizontalmente respecto al icono. */
   background-color: #012a4a;
   color: white;
   padding: 10px 15px;
   border-radius: 6px;
   font-size: 14px;
   font-weight: normal;
-  width: 280px; /* Ancho del tooltip */
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 10;
+  width: 280px; /* Ancho fijo para el tooltip. */
+  opacity: 0; /* Inicialmente invisible. */
+  visibility: hidden; /* Inicialmente oculto y no interactuable. */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Transición suave. */
+  z-index: 10; /* Se asegura de que aparezca por encima de otros elementos. */
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+/* Al pasar el mouse sobre el gatillo, el tooltip se hace visible. */
 .tooltip-trigger:hover::after {
   opacity: 1;
   visibility: visible;
+}
+/* Añadir al final de style.css para feedback de resultados */
+.results-feedback {
+  padding: 20px;
+  border-radius: 8px;
+  min-height: 150px;
+  white-space: pre-wrap;
+  font-family: "Courier New", monospace;
+  text-align: left;
+  line-height: 1.5;
+  margin-top: 20px;
+}
+
+.results-feedback.success {
+  background-color: #e8f5e9; /* Verde claro */
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
+}
+
+.results-feedback.error {
+  background-color: #ffebee; /* Rojo claro */
+  color: #c62828;
+  border: 1px solid #ef9a9a;
 }
